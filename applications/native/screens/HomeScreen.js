@@ -11,6 +11,7 @@ import {
 import { WebBrowser } from 'expo';
 
 import { MonoText } from '../components/StyledText';
+import value from "@bibleis/utils/test";
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -30,6 +31,7 @@ export default class HomeScreen extends React.Component {
               }
               style={styles.welcomeImage}
             />
+            <Text style={{ color: 'red' }}>{value}</Text>
           </View>
 
           <View style={styles.getStartedContainer}>

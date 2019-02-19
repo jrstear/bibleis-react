@@ -554,7 +554,7 @@ export class Verses extends React.PureComponent {
 				className={getClassNameForMain(textDirection, menuIsOpen)}
 				onScroll={this.handleScrollOnMain}
 			>
-				{value}
+				<div style={{ textAlign: "center", color: "red", padding: '20px 0' }}>{value}</div>
 				{!formattedSource.main &&
 					!text.length && (
 						<AudioOnlyMessage

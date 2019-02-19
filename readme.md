@@ -20,19 +20,19 @@ The root `package.json` needs the following to work with Yarn workspaces:
 
 ## React / Next.js steps taken
 
-- Add `next-plugin-transpile-modules` to package.json dependencies
-- Add `next-plugin-transpile-modules` config to next.config.js
-- Update `name` in package.json to `"name": "@bibleis/react"`
-- Add `"@bibleis/utils": "*"` to package.json dependencies
-- Create test.js in `core/utils` with sample export value
-- Pull test.js value into `app/containers/Verses/index.js`
+- Added `next-plugin-transpile-modules` to package.json dependencies
+- Added `next-plugin-transpile-modules` config to next.config.js
+- Updated `name` in package.json to `"name": "@bibleis/react"`
+- Added `"@bibleis/utils": "*"` to package.json dependencies
+- Created test.js in `core/utils` with sample export value
+- Pulled test.js value into `app/containers/Verses/index.js`
 
 ## React Native / Expo steps taken
 
-- Added `AppEntry.js` (due to issues with the one in `.expo` not bundling correctly)
-- Updated `main` in package.json to the following: `"main": "./AppEntry.js"`
+- Added `AppEntry.js` into actual project (due to issues with the one in `.expo` not bundling correctly)
+- Updated `main` in package.json to point to the AppEntry.js you created: `"main": "./AppEntry.js"`
 - Added `get-yarn-workspaces` dev dependency to package.json
-- Added `@babel/runtime` dependency to package.json
+- Added `@babel/runtime` dependency to package.json (note: you may need to run `npm start --reset-cache` after performing this step if you're getting an error about `@babel/runtime/helpers/interopRequireDefault`)
 - Added [nohoist](https://yarnpkg.com/blog/2018/02/15/nohoist/) config to package:json:
 
 ```
@@ -42,3 +42,5 @@ The root `package.json` needs the following to work with Yarn workspaces:
     ]
 }
   ```
+- Add `"@bibleis/utils": "*"` to package.json dependencies
+- Pulled test.js value into `app/screens/HomeScreen.js`

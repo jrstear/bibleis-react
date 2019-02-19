@@ -10,7 +10,9 @@ const LodashReplacement = new LodashModuleReplacementPlugin({
 	collections: true,
 	currying: true,
 });
+const withTranspileModules = require("next-plugin-transpile-modules");
 const webpackConfig = {
+	transpileModules: ["@bibleis"],
 	webpack: (config) => {
 		const originalEntry = config.entry;
 		/* eslint-disable no-param-reassign */
@@ -63,5 +65,5 @@ if (process.env.ANALYZE_BUNDLE) {
 		}),
 	);
 } else {
-	module.exports = withSass(withCss(webpackConfig));
+	module.exports = withTranspileModules(withSass(withCss(webpackConfig)));
 }

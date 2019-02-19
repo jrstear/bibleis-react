@@ -1,0 +1,14 @@
+version: 0.0
+os: ubuntu
+files:
+  - source: /
+hooks:
+  BeforeInstall:
+    - location: scripts/GetAuthKeys.sh
+    - location: scripts/appspec_preinstall.sh
+      timeout: 600
+      runas: ubuntu
+  ApplicationStart:
+    - location: scripts/appspec_application_start.sh
+      timeout: 300
+      runas: ubuntu

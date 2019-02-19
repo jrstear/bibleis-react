@@ -1,0 +1,26 @@
+version: 0.2
+
+runas: ubuntu
+
+phases:
+  install:
+    commands:
+      - npm install
+  build:
+    commands:
+      - BUILD_ID=$(git rev-parse HEAD) NODE_ENV=production npm run build
+artifacts:
+  files:
+    - .next/**/*
+    - static/**/*
+    - node_modules/**/*
+    - scripts/**/*
+    - nextServer.js
+    - ecosystem.config.js
+    - package.json
+    - next.config.js
+    - newrelic.js
+    - appspec.yml
+    - env-config.js
+    - .babelrc.js
+  name: $(AWS_REGION)-$(date +%Y-%m-%d)

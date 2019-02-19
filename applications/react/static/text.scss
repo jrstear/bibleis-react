@@ -1,0 +1,309 @@
+.text-container {
+	display: flex;
+	flex: 1;
+	// max-width: 1000px;
+	height: 100%;
+	width: 100%;
+	// position: relative;
+	transition: height 700ms ease-in-out, padding 200ms linear,
+		flex 700ms ease-in-out;
+
+	@supports (-moz-appearance: none) {
+		min-height: 0;
+	}
+
+	&.audio-player-open {
+		padding-bottom: 50px;
+	}
+
+	@media only screen and (max-width: $audio-player-bp) {
+		&.audio-player-open {
+			padding-bottom: 83px;
+		}
+	}
+
+	&.has-video {
+		padding-top: 0;
+		height: 50%;
+	}
+
+	&.video-player-open {
+		padding-top: 0;
+	}
+
+	@include css4 {
+		color: #000000; // fallback for IE
+		color: var(--application-text-container-color);
+		font-size: var(--application-base-font-size);
+	}
+
+	.active-verse {
+		// Setting to gray because it won't obscure the font and it will work regardless of the app's background color
+		@include css4 {
+			background-color: var(--application-text-selection-color);
+		}
+	}
+
+	&.scrolled-down {
+		padding-top: 10px;
+		padding-bottom: 86px;
+	}
+
+	.main-wrapper {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		overflow: hidden;
+		// position: relative;
+		margin: 0 auto;
+		padding: 0 15px;
+		height: 100%;
+		width: 100%;
+
+		@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+			overflow-y: auto;
+			overflow-x: hidden;
+		}
+	}
+
+	main {
+		// padding-right: 35px;
+		width: 100%;
+		max-height: 100%;
+		box-sizing: content-box;
+
+		&.menu-is-open {
+			-webkit-overflow-scrolling: initial;
+		}
+
+		&.rtl {
+			direction: rtl;
+			// Setting the padding this way hides the scroll bar by putting it behind its parent
+			// padding-right: 0;
+			// padding-left: 35px;
+			// left: -35px;
+
+			.drop-caps {
+				float: right;
+				margin: 0 0.5em 0.25em 0;
+			}
+		}
+
+		h1,
+		h2,
+		h3,
+		h4,
+		h5,
+		h6 {
+			font-weight: bold;
+			display: block;
+		}
+
+		h3 + h3:before {
+			content: '\A';
+		}
+
+		.audio-only {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			flex-direction: column;
+
+			svg {
+				width: 115px;
+			}
+			p {
+				width: max-content;
+			}
+			span {
+				width: max-content;
+				color: #868686;
+				opacity: 0.3;
+				margin-top: 15px;
+			}
+			.divider {
+				width: 175px;
+				height: 1px;
+				background-color: #868686;
+				opacity: 0.3;
+			}
+		}
+
+		.readers-spaces {
+			-webkit-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+		}
+		.single-formatted-verse {
+			text-align: center;
+			max-width: 1000px;
+			margin: 0 auto;
+		}
+		@media (min-width: 30rem) {
+			.single-formatted-verse {
+				@include css4 {
+					font-size: calc(
+						var(--application-base-font-size) + ((1vw - 0.25em) * 1.1111)
+					);
+				}
+				//font-size: calc(1rem + ((1vw - 0.3rem) * 1.1111));
+				/* Where: * 1.1111 = 100 * font_Size_Difference / viewport_Width_Difference */
+			}
+		}
+		/* Prevent font scaling beyond this breakpoint */
+		@media (min-width: 1000px) {
+			.single-formatted-verse {
+				@include css4 {
+					font-size: calc(
+						var(--application-base-font-size) + ((0.45em) * 1.1111)
+					);
+				}
+			}
+		}
+	}
+
+	.info-button {
+		position: absolute;
+		bottom: 136px;
+
+		&.closed {
+			bottom: 86px;
+		}
+	}
+
+	.note-in-verse {
+		z-index: 4;
+
+		@include css4 {
+			fill: var(--application-text-container-color);
+		}
+	}
+}
+
+.verse-number {
+	top: 0;
+}
+
+.verse-text {
+	margin-top: auto;
+	margin-bottom: auto;
+	padding-left: 5px;
+}
+
+.arrow-wrapper {
+	height: 80%;
+	width: 26px;
+	display: flex;
+	position: absolute;
+	top: 10%;
+	bottom: 10%;
+	// margin-top: 10%;
+	align-items: center;
+	justify-content: center;
+	pointer-events: all;
+	&.prev {
+		left: 10%;
+		width: 36px;
+	}
+
+	&.next {
+		right: 10%;
+		width: 36px;
+	}
+	@media only screen and (max-width: 1336px) {
+		&.prev {
+			left: 25px;
+			width: 26px;
+		}
+		&.next {
+			right: 25px;
+			width: 26px;
+		}
+	}
+	@media only screen and (max-width: 1110px) {
+		&.prev {
+			left: 0;
+		}
+		&.next {
+			right: 0;
+		}
+	}
+	&:not(.disabled) {
+		cursor: pointer;
+	}
+
+	&:not(.disabled):hover {
+		background: rgba(0, 0, 0, 0.2);
+	}
+}
+
+.prev-arrow-svg {
+	@include css4 {
+		fill: var(--main-textarea-svg-fill-color);
+	}
+	width: 26px;
+	height: 26px;
+}
+.next-arrow-svg {
+	@include css4 {
+		fill: var(--main-textarea-svg-fill-color);
+	}
+	width: 26px;
+	height: 26px;
+}
+.prev-arrow-svg:hover {
+	animation: thicken 0.3s forwards;
+}
+.next-arrow-svg:hover {
+	animation: thicken 0.3s forwards;
+}
+
+.active-chapter-title {
+	margin: auto;
+	max-width: 30px;
+	text-align: center;
+	font-size: 130%;
+}
+
+.drop-caps {
+	font-size: 2em;
+	line-height: 1;
+	margin: 0 0.25em 0.5em 0;
+}
+
+.read-chapter-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin: 15px 0;
+
+	.read-chapter {
+		height: 40px;
+		border-radius: 6px;
+		width: 130px;
+		max-width: 150px;
+		text-align: center;
+		background-color: #fffff5;
+		box-shadow: 1px 1px 1px 1px #b1a77a;
+		cursor: pointer;
+		font-size: 12px;
+		white-space: nowrap;
+
+		span {
+			@include css4 {
+				color: var(--read-full-chapter);
+			}
+		}
+	}
+	.read-chapter:active {
+		box-shadow: none;
+		color: #000;
+	}
+
+	.read-chapter:focus {
+		border: 1px solid #b1a77a;
+		color: #000;
+		outline: none;
+	}
+}

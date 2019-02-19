@@ -1,0 +1,33 @@
+.dark-theme {
+  // Text / Selection Dropdown Styles
+  $text-selection-background: #2C3036;
+  $text-selection-accordion-title-background: #1B1F24;
+  $text-selection-accordion-body-background: #2C3036;
+  // Book / Chapter Dropdown Styles
+  $book-dropdown-background-color: #F8E4D3;
+  $book-dropdown-chapter-background-color: #FFFFFF;
+  $book-dropdown-text-color: #000000;
+  // Main Text Area Styles
+  $svg-fill-color:#000000;
+  // Active Colors
+  $active-color-primary: #4EB07B;
+  $active-color-secondary: #6FBC8F;
+  // Highlight Colors
+  $highlight-blue:#1DA1F2;
+  $highlight-pink:#D069A9;
+  $highlight-yellow:#FCE600;
+  $highlight-green:#2E924D;
+  $highlight-purple:#8967AC;
+  // Settings Menu Styles
+  $disabled-input-option:#B2BBC6;
+  $inactive-font-option:#868686;
+  // Basic Menu Styles
+  $body-background-color:#F8E4D3;
+  $header-background-color:#F8E4D3;
+  // Application Wide Styles
+  $default-background-color:#F4F6F9;
+  $default-text-color:#000000;
+  $before-after-border-color:#999999;
+  $default-svg-fill-color:#000000;
+  $default-input-placeholder-color:#000000;
+}

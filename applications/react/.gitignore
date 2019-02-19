@@ -1,0 +1,49 @@
+# Don't check auto-generated stuff into git
+oldCodeSnippets.js
+coverage
+build
+bundles
+node_modules
+stats.json
+.env
+.next
+.next/
+.next/*
+.next/static
+.next/server
+.next/static/*
+.next/server/*
+app/utils/ENGKJV
+reduxStoreShape.js
+next-server
+static/sitemaps/*
+cdn
+cdn/
+cdn/*
+newrelic_agent.log
+
+# Https stuff for localhost
+rootCA.key
+rootCA.pem
+rootCA.srl
+server.crt
+server.csr
+server.csr.cnf
+server.key
+v3.ext
+
+# Cruft
+temp.txt
+.DS_Store
+npm-debug.log
+.idea
+# Don't check the temp json file into source
+app/utils/parsedCountries.json
+.next/server/bundles/pages/_app.js.map
+.next/server/bundles/pages/_document.js
+.next/server/bundles/pages/_document.js.map
+.next/server/bundles/pages/_error.js.map
+.next/static/commons/main.js
+.next/static/commons/main.js.map
+.next/static/commons/manifest.js
+.next/static/commons/manifest.js.map

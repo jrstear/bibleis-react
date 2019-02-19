@@ -1,0 +1,14 @@
+{
+	"files.exclude": {
+		"app/styles": true,
+		"app/styles/*": true,
+		"**/.classpath": true,
+		"**/.project": true,
+		"**/.settings": true,
+		"**/.factorypath": true
+	},
+	"search.exclude": {
+		"app/styles": false
+	},
+	"search.usePCRE2": true
+}

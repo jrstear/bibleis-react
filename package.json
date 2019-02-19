@@ -1,0 +1,14 @@
+{
+  "name": "bible-is-monorepo",
+  "version": "0.1.0",
+  "description": "Example monoapp for Digital Bible Society",
+  "private": true,
+  "scripts": {
+    "clean": "rm -rf node_modules && rm -rf applications/expo-app/node_modules",
+    "clean:install": "yarn clean && yarn"
+  },
+  "workspaces": [
+    "core/*",
+    "applications/*"
+  ]
+}

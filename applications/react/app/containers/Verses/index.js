@@ -4,7 +4,6 @@
  * Connected to Store and manages state for all actions within the Verses
  */
 
-import value from "@bibleis/utils/test";
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -313,7 +312,7 @@ export class Verses extends React.PureComponent {
 					high.verse_start === parseInt(highlightObject.verseStart, 10) &&
 					(high.highlight_start <= space &&
 						high.highlight_start + high.highlighted_words >=
-						highlightObject.highlightStart),
+							highlightObject.highlightStart),
 			)
 			.reduce((a, h) => [...a, h.id], []);
 
@@ -554,7 +553,6 @@ export class Verses extends React.PureComponent {
 				className={getClassNameForMain(textDirection, menuIsOpen)}
 				onScroll={this.handleScrollOnMain}
 			>
-				<div style={{ textAlign: "center", color: "red", padding: '20px 0' }}>{value}</div>
 				{!formattedSource.main &&
 					!text.length && (
 						<AudioOnlyMessage
@@ -564,14 +562,14 @@ export class Verses extends React.PureComponent {
 						/>
 					)}
 				{(formattedSource.main && !readersMode && !oneVersePerLine) ||
-					text.length === 0 ||
-					(!readersMode && !oneVersePerLine) ? null : (
-						<div className="active-chapter-title">
-							<h1 className="active-chapter-title">
-								{chapterAlt || activeChapter}
-							</h1>
-						</div>
-					)}
+				text.length === 0 ||
+				(!readersMode && !oneVersePerLine) ? null : (
+					<div className="active-chapter-title">
+						<h1 className="active-chapter-title">
+							{chapterAlt || activeChapter}
+						</h1>
+					</div>
+				)}
 				{formattedSource.main &&
 					domMethodsAvailable &&
 					!readersMode &&

@@ -27,12 +27,12 @@ import {
 	setUA,
 } from '../app/containers/HomePage/actions';
 import svg4everybody from '../app/utils/svgPolyfill';
-import removeDuplicates from '../app/utils/removeDuplicateObjects';
 import parseCookie from '../app/utils/parseCookie';
 import getFirstChapterReference from '../app/utils/getFirstChapterReference';
 import isUserAgentInternetExplorer from '../app/utils/isUserAgentInternetExplorer';
 import reconcilePersistedState from '../app/utils/reconcilePersistedState';
 import REDUX_PERSIST from '../app/utils/reduxPersist';
+import getBookMetaData from '../app/utils/getBookMetaData';
 
 class AppContainer extends React.Component {
 	static displayName = 'Main app';
@@ -58,7 +58,6 @@ class AppContainer extends React.Component {
 				}
 			});
 		}
-
 		// If undefined gets stored in local storage it cannot be parsed so I have to compare strings
 		if (this.props.userProfile.userId) {
 			this.props.dispatch({
@@ -172,7 +171,6 @@ class AppContainer extends React.Component {
 			initialPlaybackRate,
 			initialVolume,
 			isIe,
-			audioType,
 		} = this.props;
 		// Defaulting description text to an empty string since no metadata is better than inaccurate metadata
 		const descriptionText =
@@ -192,13 +190,13 @@ class AppContainer extends React.Component {
 					/>
 					<meta
 						property={'og:image'}
-						content={'https://listen.dbp4.org/static/icon-310x310.png'}
+						content={`${process.env.BASE_SITE_URL}/static/icon-310x310.png`}
 					/>
 					<meta property={'og:image:width'} content={310} />
 					<meta property={'og:image:height'} content={310} />
 					<meta
 						property={'og:url'}
-						content={`https://listen.dbp4.org/${routeLocation}`}
+						content={`${process.env.BASE_SITE_URL}/${routeLocation}`}
 					/>
 					<meta property={'og:description'} content={descriptionText} />
 					<meta
@@ -219,7 +217,6 @@ class AppContainer extends React.Component {
 					initialPlaybackRate={initialPlaybackRate}
 					initialVolume={initialVolume}
 					isIe={isIe}
-					audioType={audioType}
 				/>
 			</div>
 		);
@@ -261,13 +258,8 @@ AppContainer.getInitialProps = async (context) => {
 
 	if (req && req.query.audio_type) {
 		audioParam = req.query.audio_type;
-	} else if (!req && typeof window !== 'undefined') {
-		const audioParameterKeyPair = window.location.search
-			.slice(1)
-			.split('&')
-			.map((key) => key.split('='))
-			.find((key) => key[0] === 'audio_type');
-		audioParam = audioParameterKeyPair && audioParameterKeyPair[1];
+	} else if (!req) {
+		audioParam = context.query.audio_type;
 	}
 
 	if (req && req.headers) {
@@ -329,7 +321,6 @@ AppContainer.getInitialProps = async (context) => {
 		}
 
 		if (userId) {
-			setUserInfo({ userId, userEmail, userName });
 			// Authentication Information
 			isAuthenticated = !!userId;
 			// User Profile
@@ -358,11 +349,9 @@ AppContainer.getInitialProps = async (context) => {
 		initialPlaybackRate = cookieData.bible_is_playbackrate || 1;
 	}
 
-	const singleBibleUrl = `${
-		process.env.BASE_API_ROUTE
-	}/bibles/${bibleId}?asset_id=${process.env.DBP_BUCKET_ID}&key=${
+	const singleBibleUrl = `${process.env.BASE_API_ROUTE}/bibles/${bibleId}?key=${
 		process.env.DBP_API_KEY
-	}&v=4`;
+	}&v=4&asset_id=${process.env.DBP_BUCKET_ID},dbp-vid`;
 
 	// Get active bible data
 	const singleBibleRes = await cachedFetch(singleBibleUrl).catch((e) => {
@@ -371,7 +360,6 @@ AppContainer.getInitialProps = async (context) => {
 		}
 		return { data: {} };
 	});
-
 	const singleBibleJson = singleBibleRes; // Not sure why I did this, probably should remove
 	const bible = singleBibleJson.data || {};
 	// Acceptable fileset types that the site is capable of ingesting and displaying
@@ -431,6 +419,16 @@ AppContainer.getInitialProps = async (context) => {
 					bible.filesets[process.env.DBP_BUCKET_ID].length > 1) ||
 				bible.filesets[process.env.DBP_BUCKET_ID].length === 1,
 		);
+	} else if (bible && bible.filesets && bible.filesets['dbp-vid']) {
+		filesets = bible.filesets['dbp-vid'].filter(
+			(file) =>
+				(!file.id.includes('GID') &&
+					file.id.slice(-4) !== 'DA16' &&
+					setTypes[file.type] &&
+					file.size !== 'S' &&
+					bible.filesets['dbp-vid'].length > 1) ||
+				bible.filesets['dbp-vid'].length === 1,
+		);
 	}
 
 	const formattedFilesetIds = [];
@@ -447,27 +445,9 @@ AppContainer.getInitialProps = async (context) => {
 		idsForBookMetadata.push([set.type, set.id]);
 	});
 
-	const bookMetaPromises = idsForBookMetadata.map(async (filesetTuple) => {
-		const url = `${process.env.BASE_API_ROUTE}/bibles/filesets/${
-			filesetTuple[1]
-		}/books?v=4&key=${process.env.DBP_API_KEY}&asset_id=${
-			filesetTuple[0] === 'video_stream' ? 'dbp-vid' : process.env.DBP_BUCKET_ID
-		}&fileset_type=${filesetTuple[0]}`;
-		const res = await cachedFetch(url);
-
-		return { [filesetTuple[1]]: res.data } || [];
+	const [bookMetaData, bookMetaResponse] = await getBookMetaData({
+		idsForBookMetadata,
 	});
-	const bookMetaResponse = await Promise.all(bookMetaPromises);
-
-	const bookMetaData = removeDuplicates(
-		bookMetaResponse.slice().reduce((reducedObjects, filesetObject) => {
-			if (Object.values(filesetObject) && Object.values(filesetObject)[0]) {
-				return [...reducedObjects, ...Object.values(filesetObject)[0]];
-			}
-			return reducedObjects;
-		}, []),
-		'book_id',
-	).sort((a, b) => a.book_order - b.book_order);
 
 	if (audioParam) {
 		// If there are any audio filesets with the given type
@@ -483,6 +463,7 @@ AppContainer.getInitialProps = async (context) => {
 			audioParam = '';
 		}
 	}
+
 	// Redirect to the new url if conditions are met
 	if (bookMetaData && bookMetaData.length) {
 		const foundBook = bookMetaData.find(
@@ -607,7 +588,13 @@ AppContainer.getInitialProps = async (context) => {
 	} else {
 		activeBook = undefined;
 	}
-
+	const availableAudioTypes = [];
+	if (filesets.some((set) => set.type === 'audio_drama')) {
+		availableAudioTypes.push('audio_drama');
+	}
+	if (filesets.some((set) => set.type === 'audio')) {
+		availableAudioTypes.push('audio');
+	}
 	const activeBookName = activeBook ? activeBook.name : '';
 	const testaments = bookData
 		? bookData.reduce((a, c) => ({ ...a, [c.book_id]: c.testament }), {})
@@ -633,8 +620,8 @@ AppContainer.getInitialProps = async (context) => {
 				userProfile,
 				activeFilesetId,
 				audioType: audioType || '',
+				availableAudioTypes,
 				loadingAudio: true,
-				hasAudio: false,
 				hasVideo,
 				chapterText,
 				testaments,
@@ -678,7 +665,7 @@ AppContainer.getInitialProps = async (context) => {
 		document.cookie = `bible_is_ref_chapter=${chapter}`;
 		document.cookie = `bible_is_ref_verse=${verse}`;
 	}
-
+	// console.log(filesets);
 	return {
 		initialVolume,
 		initialPlaybackRate,
@@ -726,7 +713,6 @@ AppContainer.propTypes = {
 	chapterText: PropTypes.array,
 	fetchedUrls: PropTypes.array,
 	isFromServer: PropTypes.bool,
-	audioType: PropTypes.string,
 	isIe: PropTypes.bool,
 	routeLocation: PropTypes.string,
 	activeBookName: PropTypes.string,

@@ -7,6 +7,7 @@
  */
 
 import { fromJS } from 'immutable';
+import { SET_AUDIO_TYPE } from '../AudioPlayer/constants';
 import { USER_LOGGED_IN, LOG_OUT } from '../Profile/constants';
 import {
 	CLOSE_VIDEO_PLAYER,
@@ -36,7 +37,6 @@ import {
 	SET_ACTIVE_NOTE,
 	UPDATE_SELECTED_TEXT,
 	GET_BOOKS,
-	GET_CHAPTER_TEXT,
 	GET_COPYRIGHTS,
 	RESET_BOOKMARK_STATE,
 	ADD_BOOKMARK_SUCCESS,
@@ -52,6 +52,7 @@ const initialState = fromJS({
 	previousAudioPaths: [],
 	nextAudioPaths: [],
 	audioPaths: [],
+	availableAudioTypes: [],
 	note: {},
 	filesetTypes: {},
 	userProfile: {},
@@ -69,7 +70,8 @@ const initialState = fromJS({
 	activeChapter: 1,
 	hasAudio: false,
 	hasVideo: false,
-	videoPlayerOpen: true,
+	videoChapterState: false,
+	videoPlayerOpen: false,
 	userAuthenticated: false,
 	isChapterSelectionActive: false,
 	isProfileActive: false,
@@ -126,15 +128,22 @@ const initialState = fromJS({
 
 function homePageReducer(state = initialState, action) {
 	switch (action.type) {
+		// Audio play actions
+		case SET_AUDIO_TYPE:
+			return state.set('audioType', action.audioType);
 		// Video player actions
 		case OPEN_VIDEO_PLAYER:
 			return state.set('videoPlayerOpen', true);
-		case CHANGING_VERSION:
-			return state.set('changingVersion', action.state);
 		case CLOSE_VIDEO_PLAYER:
 			return state.set('videoPlayerOpen', false);
 		case SET_HAS_VIDEO:
-			return state.set('hasVideo', action.state);
+			return state
+				.set('hasVideo', action.state)
+				.set('videoChapterState', action.videoChapterState)
+				.set('videoPlayerOpen', action.videoPlayerOpen);
+		// Homepage Actions
+		case CHANGING_VERSION:
+			return state.set('changingVersion', action.state);
 		case USER_LOGGED_IN:
 			return state.set('userId', action.userId).set('userAuthenticated', true);
 		case LOG_OUT:
@@ -151,9 +160,6 @@ function homePageReducer(state = initialState, action) {
 			return state.set('testaments', action.testaments);
 		case TOGGLE_FIRST_LOAD_TEXT_SELECTION:
 			return state.set('firstLoad', false);
-
-		case GET_CHAPTER_TEXT:
-			return state.set('loadingNewChapterText', true);
 		case GET_BOOKS:
 			return state.set('loadingNewChapterText', true).set('loadingBooks', true);
 		case SET_USER_AGENT:
@@ -273,7 +279,7 @@ function homePageReducer(state = initialState, action) {
 				.set('formattedSource', fromJS(action.formattedText));
 		case 'loadaudio':
 			return state
-				.set('hasAudio', true)
+				.set('hasAudio', !!action.audioPaths[0])
 				.set('audioPaths', action.audioPaths.slice(1))
 				.set('audioFilesetId', action.audioFilesetId)
 				.set('loadingAudio', false)

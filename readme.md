@@ -44,3 +44,14 @@ The root `package.json` needs the following to work with Yarn workspaces:
   ```
 - Add `"@bibleis/utils": "*"` to package.json dependencies
 - Pulled test.js value into `app/screens/HomeScreen.js`
+
+## Quickstart for React Native
+This project requires Node.js and npm. 
+
+If you do not have Node, follow the installation instructions here: [Node.js](https://nodejs.org).
+
+Once you have successfully installed Node and cloned the repository, run `npm install` to install the required dependencies.
+
+To test on an Android device or an emulator: 
+- Run `expo start`. This starts (or restarts) a local server for your app and ggives you a URL to it. A new tab with this info will open in your web browser.
+- On that new tab in your web browser, click "Run on an Android device/emulator", located on the left side of the page.
